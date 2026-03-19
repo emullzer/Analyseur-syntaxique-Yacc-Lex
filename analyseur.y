@@ -1,0 +1,47 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+
+extern int yylex();
+void yyerror(const char *s);
+%}
+
+%union {
+    int i;
+}
+
+%token INT IDENT EGALE FIN PV
+%token <i> ENTIER
+%type <i> Affectation
+
+%% 
+
+Input : 
+      | Input Ligne 
+      ;
+
+Ligne : Affectation FIN {
+          if($1 == 0) { 
+              printf("--> Resultat : Affectation sans type.\n"); 
+          } else { 
+              printf("--> Resultat : Affectation avec type.\n"); 
+          }
+      }
+      | FIN 
+      ;
+
+Affectation : INT IDENT EGALE ENTIER PV { $$ = 1; }
+            | IDENT EGALE ENTIER PV     { $$ = 0; }
+            ;
+
+%%
+
+void yyerror(const char *s) {
+    fprintf(stderr, "Erreur syntaxique : %s\n", s);
+}
+
+int main() {
+    printf("Entrez votre code (ex: int x = 5 ;):\n");
+    yyparse();
+    return 0;
+}

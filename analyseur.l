@@ -1,0 +1,18 @@
+%option noyywrap
+%{
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include "y.tab.h"
+%}
+
+%%
+"int"                { return INT; }
+[0-9]+               { yylval.i = atoi(yytext); return ENTIER; }
+[A-Za-z][A-Za-z0-9]* { return IDENT; }
+"="                  { return EGALE; }
+";"                  { return PV; }
+"\n"                 { return FIN; }
+
+.                    {; }
+
+%%
