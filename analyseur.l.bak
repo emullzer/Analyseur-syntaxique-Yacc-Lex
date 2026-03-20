@@ -11,11 +11,6 @@
 [0-9]+               { yylval.i = atoi(yytext); return ENTIER; }
 [A-Za-z][A-Za-z0-9]* { return IDENT; }
 "="                  { return EGALE; }
-"+" {return PLUS;}
-"-" {return MOINS;}
-"*" {return FOIS;}
-"/" {return DIVISER;}
-
 ";"                  { return PV; }
 "\n"                 { return FIN; }
 

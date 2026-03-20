@@ -51,7 +51,12 @@ extern int yydebug;
      EGALE = 260,
      FIN = 261,
      PV = 262,
-     ENTIER = 263
+     PLUS = 263,
+     MOINS = 264,
+     FOIS = 265,
+     DIVISER = 266,
+     PRINT = 267,
+     ENTIER = 268
    };
 #endif
 /* Tokens.  */
@@ -60,7 +65,12 @@ extern int yydebug;
 #define EGALE 260
 #define FIN 261
 #define PV 262
-#define ENTIER 263
+#define PLUS 263
+#define MOINS 264
+#define FOIS 265
+#define DIVISER 266
+#define PRINT 267
+#define ENTIER 268
 
 
 
@@ -74,7 +84,7 @@ typedef union YYSTYPE
 
 
 /* Line 2058 of yacc.c  */
-#line 78 "y.tab.h"
+#line 88 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

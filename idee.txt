@@ -1,0 +1,8 @@
+Faire table symbole
+implementer Print
+liste
+tableau ?
+cvalculs
+doubles
+string
+concatenation de srting, tolowercase

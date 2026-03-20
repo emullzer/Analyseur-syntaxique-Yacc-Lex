@@ -27,7 +27,7 @@ Ligne : Affectation FIN {
               printf("--> Resultat : Affectation avec type.\n"); 
           }
       }
-      | Expression FIN {printf("%d\n",$1);}
+      | Expression FIN {printf("%d",$1);}
       | FIN 
       ;
 
