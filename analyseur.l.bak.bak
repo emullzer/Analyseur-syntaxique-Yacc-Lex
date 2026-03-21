@@ -2,32 +2,21 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
-    #include <string.h>
-    #include "commun.h"
     #include "y.tab.h"
 %}
 
 %%
 "Afficher" { return AFFICHER;}
 "int"                { return INT; }
-"string" {return STR;}
-"for" {return FOR;}
 [0-9]+               { yylval.entier = atoi(yytext); return ENTIER; }
-\"[^\"]*\"	     { yylval.chaineCaracteres = strdup(yytext); return STRING; }
 [A-Za-z][A-Za-z0-9]* { yylval.chaineCaracteres = strdup(yytext); return IDENT; }
-
 "="                  { return EGALE; }
 "+" {return PLUS;}
 "-" {return MOINS;}
 "*" {return FOIS;}
 "/" {return DIVISER;}
 "(" {return PAR_G;}
-")" {return PAR_D;}
-"<"      { return PP; }
-">"      { return PG; }
-"<="     { return PE; }
-">="     { return GE; }
-"=="     { return EE; }
+")"
 ";"                  { return PV; }
 "\n"                 { return FIN; }
 

@@ -9,8 +9,12 @@
 %%
 "Afficher" { return AFFICHER;}
 "int"                { return INT; }
+"string" {return STR;}
+"for" {return FOR;}
 [0-9]+               { yylval.entier = atoi(yytext); return ENTIER; }
+\"[^\"]*\"	     { yylval.chaineCaracteres = strdup(yytext); return STRING; }
 [A-Za-z][A-Za-z0-9]* { yylval.chaineCaracteres = strdup(yytext); return IDENT; }
+
 "="                  { return EGALE; }
 "+" {return PLUS;}
 "-" {return MOINS;}

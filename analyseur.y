@@ -2,32 +2,43 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "commun.h"
 
 extern int yylex();
 void yyerror(const char *s);
 
+
 typedef struct Symbole {
 	char nom[20], type[20];
-	int valeur;
+	union{
+		int valeur;
+		char* chaine;
+	};
 }Symbole;
 
 Symbole table_symboles[100];
 int taille_table;
 
+
 int rechercher(char* nom);
-void inserer(char* nom, int valeur);
+void insererEntier(char* nom, int valeur);
+void insererString(char* nom, char* chaine);
+char* concatener(char* s1, char* s2);
+int comparaison(int op,expressionVal e1,expressionVal e3);
 %}
 
 %union {
     int entier;
     char* chaineCaracteres;
+    expressionVal expVal;
 }
 
 
-%token INT EGALE FIN PV PLUS MOINS FOIS DIVISER AFFICHER PAR_G PAR_D PP PG PE GE EE FOR
+%token INT EGALE FIN PV PLUS MOINS FOIS DIVISER AFFICHER PAR_G PAR_D PP PG PE GE EE FOR STR
 %token <entier> ENTIER
-%token <chaineCaracteres> IDENT
-%type <entier> Affectation Expression
+%token <chaineCaracteres> IDENT STRING
+%type <entier> Affectation
+%type <expVal> Expression
 
 %right EGALE
 %left EE   
@@ -49,32 +60,103 @@ Ligne : Affectation FIN {
               printf("--> Resultat : Affectation avec type.\n"); 
           }
       }
-      | Expression PV FIN {printf("%d\n",$1);}
+      | Expression PV FIN {if($1.type == 0) printf("--> %d\n", $1.vInt);else printf("--> %s\n", $1.vStr);}
       | Boucle FIN
       | Fonction FIN
       | FIN 
       ;
 
-Affectation : INT IDENT EGALE ENTIER PV { if(verifierNom($2)){ inserer($2,$4); $$=1; }else printf("Vous ne pouvez pas redéclarer une variable avec son type si elle est deja initialisée."); }
-            | IDENT EGALE ENTIER PV     { inserer($1,$3); $$ = 0; }
-	    | IDENT EGALE Expression { inserer($1,$3); $$ = 0; }
-            ;
-	  
-Expression: Expression PP Expression { $$ = ($1 < $3); }
-          | Expression PG Expression { $$ = ($1 > $3); }
-          | Expression PE Expression { $$ = ($1 <= $3); }
-          | Expression GE Expression { $$ = ($1 >= $3); }
-          | Expression EE Expression { $$ = ($1 == $3); }
-	  | Expression PLUS Expression   { $$ = $1 + $3; }
-	  | Expression FOIS Expression  { $$ = $1 * $3; }
-	  | Expression MOINS Expression { $$ = $1 - $3; }
-	  | Expression DIVISER Expression  { $$ = $1 / $3; }
-	  | IDENT {int pos = rechercher($1); if(pos != -1){ $$ = table_symboles[pos].valeur;}else{printf("La variable %s n'existe pas.",$1);} }
-	  | ENTIER;
+Affectation : STR IDENT EGALE Expression PV { 
+          if($4.type == 1) { 
+              insererString($2, $4.vStr); $$ = 1; 
+          } else { 
+              printf("Erreur : Impossible d'assigner un INT à une variable STR.\n"); $$ = 1;
+          }
+      }
+    | INT IDENT EGALE Expression PV { 
+          if($4.type == 0) { 
+              insererEntier($2, $4.vInt); $$ = 1; 
+          } else { 
+              printf("Erreur : Impossible d'assigner une STRING à une variable INT.\n"); $$ = 1;
+          }
+      }
+    | IDENT EGALE Expression PV { 
+          int pos = rechercher($1);
+          if(pos != -1) {
+              if(strcmp(table_symboles[pos].type, "INT") == 0 && $3.type == 0) 
+                  insererEntier($1, $3.vInt);
+              else if(strcmp(table_symboles[pos].type, "STRING") == 0 && $3.type == 1)
+                  insererString($1, $3.vStr);
+              else
+                  printf("Erreur : Type incompatible pour l'assignation.\n");
+          } else {
+              printf("Erreur : Variable %s non déclarée.\n", $1);
+          }
+          $$ = 0;
+      }  
+
+Expression: Expression PP Expression { $$.type = 0; $$.vInt = comparaison(PP, $1, $3); }
+          | Expression PG Expression { $$.type = 0; $$.vInt = comparaison(PG, $1, $3); }
+          | Expression PE Expression { $$.type = 0; $$.vInt = comparaison(PE, $1, $3); }
+          | Expression GE Expression { $$.type = 0; $$.vInt = comparaison(GE, $1, $3); }
+          | Expression EE Expression { $$.type = 0; $$.vInt = comparaison(EE, $1, $3); }
+	  | Expression PLUS Expression   { if($1.type != $3.type) printf("Type incompatible.");
+					   else if($1.type == 0){ 
+						$$.type = 0; $$.vInt = $1.vInt + $3.vInt;
+					   }else { $$.type = 1; $$.vStr = concatener($1.vStr, $3.vStr); } }
+	  | Expression FOIS Expression  { if ($1.type != 0 || $3.type != 0) {
+						printf("Erreur : Impossible d'utiliser '*' avec une String.\n");
+						$$.type = 0; $$.vInt = 0; 
+					  } else { 
+						$$.type = 0; 
+						$$.vInt = $1.vInt * $3.vInt; 
+					  }
+					 }
+	  | Expression MOINS Expression { if ($1.type != 0 || $3.type != 0) {
+						printf("Erreur : Impossible d'utiliser '-' avec une String.\n");
+						$$.type = 0; $$.vInt = 0; 
+					  } else { 
+						$$.type = 0; 
+						$$.vInt = $1.vInt - $3.vInt; 
+					  }
+					 }
+	  | Expression DIVISER Expression  { if ($1.type != 0 || $3.type != 0) {
+						printf("Erreur : Impossible d'utiliser '/' avec une String.\n");
+						$$.type = 0; $$.vInt = 0; 
+					  } else { 
+						$$.type = 0; 
+						$$.vInt = $1.vInt / $3.vInt; 
+					  }
+					 }
+	  | IDENT {int pos = rechercher($1); 
+		   if(pos != -1) {
+			if(strcmp(table_symboles[pos].type, "INT") == 0) {
+			$$.type = 0; 
+			$$.vInt = table_symboles[pos].valeur;
+		   } else {
+			$$.type = 1; 
+			$$.vStr = table_symboles[pos].chaine;
+		   }
+		   } else {
+			printf("Erreur : La variable %s n'existe pas.\n", $1);
+			$$.type = 0; $$.vInt = 0;
+		   } 
+		  }
+	  | ENTIER {$$.type = 0; $$.vInt = $1;}
+	  | STRING {$$.type = 1; $$.vStr = $1;};
+
 
 Boucle: FOR PAR_G Affectation Expression PV Affectation PAR_D {printf("Structure de la boucle FOR correcte.\n");};
 
-Fonction: AFFICHER PAR_G IDENT PAR_D PV {int index = rechercher($3); if(index != -1){printf("%s = %d\n",table_symboles[index].nom,table_symboles[index].valeur);}else{ printf("La variable %s n'existe pas.",$3);}};
+Fonction: AFFICHER PAR_G IDENT PAR_D PV {int i = rechercher($3);
+    if(i != -1) {
+        if(strcmp(table_symboles[i].type, "INT") == 0)
+            printf("%s = %d\n", table_symboles[i].nom, table_symboles[i].valeur);
+        else
+            printf("%s = %s\n", table_symboles[i].nom, table_symboles[i].chaine);
+    } else {
+        printf("Erreur : variable %s inconnue.\n", $3);
+    }};
 	
 %%
 
@@ -89,24 +171,82 @@ int rechercher(char* nom){
 	return -1;
 }
 
-void inserer(char* nom, int valeur){
+void insererEntier(char* nom, int valeur){
 	int index = rechercher(nom);
 	if (index == -1){
 		strcpy(table_symboles[taille_table].nom,nom);
 		table_symboles[taille_table].nom[19] = '\0';
 
 		table_symboles[taille_table].valeur = valeur;
+		strcpy(table_symboles[taille_table].type, "INT");
 		taille_table++;
 	}
 	else
 	{
+		if(strcmp(table_symboles[index].type, "INT") != 0){
+			printf("Vous ne pouvez assigner un entier a une variable qui n'est pas de type INT.");
+			return;
+		}
+
 		table_symboles[index].valeur = valeur;
+	}
+}
+
+void insererString(char* nom, char* chaine){
+	int index = rechercher(nom);
+	if (index == -1){
+		strcpy(table_symboles[taille_table].nom,nom);
+		strcpy(table_symboles[taille_table].type, "STRING");
+
+		table_symboles[taille_table].chaine = strdup(chaine);
+		taille_table++;
+	}
+	else
+	{
+		if(strcmp(table_symboles[index].type, "STRING") != 0){
+			printf("Vous ne pouvez assigner une chaine de caracteres a une variable qui n'est pas de type STRING.");
+			return;
+		}
+		free(table_symboles[index].chaine);
+		table_symboles[index].chaine = strdup(chaine);
 	}
 }
 
 int verifierNom(char* nom){
 	if (rechercher(nom) == -1) return 1;
 	else return 0;
+}
+
+char* concatener(char* s1, char* s2) {
+    char* res = malloc(strlen(s1) + strlen(s2) + 1);
+    if (res) {
+        strcpy(res, s1);
+        strcat(res, s2);
+    }
+    return res;
+}
+
+int comparaison(int op, expressionVal e1, expressionVal e3) {
+    if(e1.type != e3.type) return 0;
+    if(e1.type == 0) { 
+        switch(op) {
+            case PP: return e1.vInt < e3.vInt;
+            case PG: return e1.vInt > e3.vInt;
+	    case PE: return e1.vInt <= e3.vInt;
+	    case GE: return e1.vInt >= e3.vInt;
+            case EE: return e1.vInt == e3.vInt;
+        }
+    } else {
+        int res = strcmp(e1.vStr, e3.vStr);
+        switch(op) {
+            case PP: return res < 0;
+            case PG: return res > 0;
+	    case PE: return res <= 0;
+	    case GE: return res >= 0;
+            case EE: return res == 0;
+        }
+    }
+    return 0;
 }
 
 

@@ -63,8 +63,10 @@ extern int yydebug;
      GE = 272,
      EE = 273,
      FOR = 274,
-     ENTIER = 275,
-     IDENT = 276
+     STR = 275,
+     ENTIER = 276,
+     IDENT = 277,
+     STRING = 278
    };
 #endif
 /* Tokens.  */
@@ -85,8 +87,10 @@ extern int yydebug;
 #define GE 272
 #define EE 273
 #define FOR 274
-#define ENTIER 275
-#define IDENT 276
+#define STR 275
+#define ENTIER 276
+#define IDENT 277
+#define STRING 278
 
 
 
@@ -94,14 +98,15 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 2058 of yacc.c  */
-#line 21 "analyseur.y"
+#line 30 "analyseur.y"
 
     int entier;
     char* chaineCaracteres;
+    expressionVal expVal;
 
 
 /* Line 2058 of yacc.c  */
-#line 105 "y.tab.h"
+#line 110 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
