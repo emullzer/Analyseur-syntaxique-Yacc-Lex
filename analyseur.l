@@ -2,20 +2,28 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
+    #include <string.h>
     #include "y.tab.h"
 %}
 
 %%
-"Afficher" { return PRINT;}
+"Afficher" { return AFFICHER;}
 "int"                { return INT; }
-[0-9]+               { yylval.i = atoi(yytext); return ENTIER; }
-[A-Za-z][A-Za-z0-9]* { return IDENT; }
+"for" {return FOR;}
+[0-9]+               { yylval.entier = atoi(yytext); return ENTIER; }
+[A-Za-z][A-Za-z0-9]* { yylval.chaineCaracteres = strdup(yytext); return IDENT; }
 "="                  { return EGALE; }
 "+" {return PLUS;}
 "-" {return MOINS;}
 "*" {return FOIS;}
 "/" {return DIVISER;}
-
+"(" {return PAR_G;}
+")" {return PAR_D;}
+"<"      { return PP; }
+">"      { return PG; }
+"<="     { return PE; }
+">="     { return GE; }
+"=="     { return EE; }
 ";"                  { return PV; }
 "\n"                 { return FIN; }
 

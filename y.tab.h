@@ -47,30 +47,46 @@ extern int yydebug;
       know about them.  */
    enum yytokentype {
      INT = 258,
-     IDENT = 259,
-     EGALE = 260,
-     FIN = 261,
-     PV = 262,
-     PLUS = 263,
-     MOINS = 264,
-     FOIS = 265,
-     DIVISER = 266,
-     PRINT = 267,
-     ENTIER = 268
+     EGALE = 259,
+     FIN = 260,
+     PV = 261,
+     PLUS = 262,
+     MOINS = 263,
+     FOIS = 264,
+     DIVISER = 265,
+     AFFICHER = 266,
+     PAR_G = 267,
+     PAR_D = 268,
+     PP = 269,
+     PG = 270,
+     PE = 271,
+     GE = 272,
+     EE = 273,
+     FOR = 274,
+     ENTIER = 275,
+     IDENT = 276
    };
 #endif
 /* Tokens.  */
 #define INT 258
-#define IDENT 259
-#define EGALE 260
-#define FIN 261
-#define PV 262
-#define PLUS 263
-#define MOINS 264
-#define FOIS 265
-#define DIVISER 266
-#define PRINT 267
-#define ENTIER 268
+#define EGALE 259
+#define FIN 260
+#define PV 261
+#define PLUS 262
+#define MOINS 263
+#define FOIS 264
+#define DIVISER 265
+#define AFFICHER 266
+#define PAR_G 267
+#define PAR_D 268
+#define PP 269
+#define PG 270
+#define PE 271
+#define GE 272
+#define EE 273
+#define FOR 274
+#define ENTIER 275
+#define IDENT 276
 
 
 
@@ -78,13 +94,14 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 2058 of yacc.c  */
-#line 9 "analyseur.y"
+#line 21 "analyseur.y"
 
-    int i;
+    int entier;
+    char* chaineCaracteres;
 
 
 /* Line 2058 of yacc.c  */
-#line 88 "y.tab.h"
+#line 105 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
