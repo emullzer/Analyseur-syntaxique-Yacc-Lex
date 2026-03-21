@@ -2,15 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "commun.h"
 
 extern int yylex();
 void yyerror(const char *s);
 
-typedef struct {
-        int type;            // 0 = INT, 1 = STRING
-        int vInt;
-        char* vStr;
-}expressionVal;
 
 typedef struct Symbole {
 	char nom[20], type[20];

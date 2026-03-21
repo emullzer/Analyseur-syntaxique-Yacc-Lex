@@ -56,7 +56,7 @@ Input :
 Ligne : Affectation FIN {
           if($1 == 0) { 
               printf("--> Resultat : Affectation sans type.\n"); 
-          } else { 
+          } else if ($1 == 1) {
               printf("--> Resultat : Affectation avec type.\n"); 
           }
       }
@@ -91,8 +91,9 @@ Affectation : STR IDENT EGALE Expression PV {
                   printf("Erreur : Type incompatible pour l'assignation.\n");
           } else {
               printf("Erreur : Variable %s non déclarée.\n", $1);
+	      $$ = -1;
           }
-          $$ = 0;
+          
       }  
 
 Expression: Expression PP Expression { $$.type = 0; $$.vInt = comparaison(PP, $1, $3); }
