@@ -104,16 +104,6 @@ void inserer(char* nom, int valeur){
 	}
 }
 
-void remplacer(char *nom, int valeur){
-	int index = rechercher(nom);
-	if (index == -1){
-		printf("La variable %s n'existe pas.",nom);
-		return;
-	}
-	table_symboles[index].valeur = valeur;
-
-}
-
 int verifierNom(char* nom){
 	if (rechercher(nom) == -1) return 1;
 	else return 0;
