@@ -679,7 +679,7 @@ YY_RULE_SETUP
 case 8:
 YY_RULE_SETUP
 #line 18 "analyseur.l"
-{ yylval.chaineCaracteres = strdup(yytext); return STRING; } // on regarde une chaine de caracteres entourées de guillemets
+{ yylval.chaineCaracteres = strdup(yytext + 1); yylval.chaineCaracteres[strlen(yylval.chaineCaracteres) - 1] ='\0'; return STRING; } // on regarde une chaine de caracteres entourées de guillemets
 	YY_BREAK
 case 9:
 YY_RULE_SETUP

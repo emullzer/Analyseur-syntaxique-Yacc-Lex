@@ -53,7 +53,6 @@ Input :
       | Input Ligne 
       | Input error FIN { //quand il ne reconnait pas la ligne, ne se ferme pas mais affiche un message
             yyerrok;
-            printf("Ligne non reconnue.\n"); 
         }
       ;
 
@@ -114,6 +113,34 @@ Affectation : STR IDENT EGALE Expression PV {
           }
       }
     | IDENT DECREMENT PV {
+          int pos = rechercher($1);
+          if(pos != -1) {
+              if(strcmp(table_symboles[pos].type, "INT") == 0) { // on verifie que c'est bien un entier
+                  table_symboles[pos].valeur--;
+                  $$ = 0; // On considère ça comme une affectation sans type
+		  printf("Variable decrementee de 1.\n");
+              } else {
+                  printf("Erreur : Impossible d'incrémenter une STRING.\n");
+              }
+          } else {
+              printf("Erreur : Variable %s non déclarée.\n", $1);
+          }
+      }
+       IDENT INCREMENT {
+          int pos = rechercher($1);
+          if(pos != -1) {
+              if(strcmp(table_symboles[pos].type, "INT") == 0) { // on verifie que c'est bien un entier
+                  table_symboles[pos].valeur++;
+                  $$ = 0;
+		  printf("Variable incrementee de 1.\n");
+              } else {
+                  printf("Erreur : Impossible d'incrémenter une STRING.\n");
+              }
+          } else {
+              printf("Erreur : Variable %s non déclarée.\n", $1);
+          }
+      }
+    | IDENT DECREMENT{
           int pos = rechercher($1);
           if(pos != -1) {
               if(strcmp(table_symboles[pos].type, "INT") == 0) { // on verifie que c'est bien un entier

@@ -15,7 +15,7 @@
 "if" {return SI;} // pour la detection d'un if / if else
 "else" {return SINON;}
 [0-9]+               { yylval.entier = atoi(yytext); return ENTIER; } // detection d'un entier
-\"[^\"]*\"	     { yylval.chaineCaracteres = strdup(yytext); return STRING; } // on regarde une chaine de caracteres entourées de guillemets
+\"[^\"]*\"	     { yylval.chaineCaracteres = strdup(yytext + 1); yylval.chaineCaracteres[strlen(yylval.chaineCaracteres) - 1] =""; return STRING; } // on regarde une chaine de caracteres entourées de guillemets
 [A-Za-z][A-Za-z0-9]* { yylval.chaineCaracteres = strdup(yytext); return IDENT; } //detection de l'identifiant, commence par une lettre et peux contenir des chiffres
 
 "="                  { return EGALE; }
@@ -28,6 +28,7 @@
 "(" {return PAR_G;}
 ")" {return PAR_D;}
 "{" {return AC_G;}
+"}" {return AC_D;}
 "<"      { return PP; }
 ">"      { return PG; }
 "<="     { return PE; }

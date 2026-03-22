@@ -125,6 +125,34 @@ Affectation : STR IDENT EGALE Expression PV {
           } else {
               printf("Erreur : Variable %s non déclarée.\n", $1);
           }
+      }
+       | IDENT INCREMENT {
+          int pos = rechercher($1);
+          if(pos != -1) {
+              if(strcmp(table_symboles[pos].type, "INT") == 0) { // on verifie que c'est bien un entier
+                  table_symboles[pos].valeur++;
+                  $$ = 0;
+		  printf("Variable incrementee de 1.\n");
+              } else {
+                  printf("Erreur : Impossible d'incrémenter une STRING.\n");
+              }
+          } else {
+              printf("Erreur : Variable %s non déclarée.\n", $1);
+          }
+      }
+    | IDENT DECREMENT{
+          int pos = rechercher($1);
+          if(pos != -1) {
+              if(strcmp(table_symboles[pos].type, "INT") == 0) { // on verifie que c'est bien un entier
+                  table_symboles[pos].valeur--;
+                  $$ = 0; // On considère ça comme une affectation sans type
+		  printf("Variable decrementee de 1.\n");
+              } else {
+                  printf("Erreur : Impossible d'incrémenter une STRING.\n");
+              }
+          } else {
+              printf("Erreur : Variable %s non déclarée.\n", $1);
+          }
       };
 
 Expression: Expression PP Expression { $$.type = 0; $$.vInt = comparaison(PP, $1, $3); }
