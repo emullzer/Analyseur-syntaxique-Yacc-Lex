@@ -62,11 +62,17 @@ extern int yydebug;
      PE = 271,
      GE = 272,
      EE = 273,
-     FOR = 274,
+     POUR = 274,
      STR = 275,
-     ENTIER = 276,
-     IDENT = 277,
-     STRING = 278
+     INCREMENT = 276,
+     DECREMENT = 277,
+     SI = 278,
+     SINON = 279,
+     AC_G = 280,
+     AC_D = 281,
+     ENTIER = 282,
+     IDENT = 283,
+     STRING = 284
    };
 #endif
 /* Tokens.  */
@@ -86,11 +92,17 @@ extern int yydebug;
 #define PE 271
 #define GE 272
 #define EE 273
-#define FOR 274
+#define POUR 274
 #define STR 275
-#define ENTIER 276
-#define IDENT 277
-#define STRING 278
+#define INCREMENT 276
+#define DECREMENT 277
+#define SI 278
+#define SINON 279
+#define AC_G 280
+#define AC_D 281
+#define ENTIER 282
+#define IDENT 283
+#define STRING 284
 
 
 
@@ -106,7 +118,7 @@ typedef union YYSTYPE
 
 
 /* Line 2058 of yacc.c  */
-#line 110 "y.tab.h"
+#line 122 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

@@ -3,25 +3,31 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include "commun.h"
     #include "y.tab.h"
 %}
 
 %%
-"Afficher" { return AFFICHER;}
-"int"                { return INT; }
-"string" {return STR;}
-"for" {return FOR;}
-[0-9]+               { yylval.entier = atoi(yytext); return ENTIER; }
-\"[^\"]*\"	     { yylval.chaineCaracteres = strdup(yytext); return STRING; }
-[A-Za-z][A-Za-z0-9]* { yylval.chaineCaracteres = strdup(yytext); return IDENT; }
+"Afficher" { return AFFICHER;} //utilise dans la fonction pour print une variable
+"int"                { return INT; } //type entier
+"string" {return STR;} // type chaine de caracteres
+"for" {return POUR;} //pour la detection d'une boucle for
+"if" {return SI;} // pour la detection d'un if / if else
+"else" {return SINON;}
+[0-9]+               { yylval.entier = atoi(yytext); return ENTIER; } // detection d'un entier
+\"[^\"]*\"	     { yylval.chaineCaracteres = strdup(yytext); return STRING; } // on regarde une chaine de caracteres entourées de guillemets
+[A-Za-z][A-Za-z0-9]* { yylval.chaineCaracteres = strdup(yytext); return IDENT; } //detection de l'identifiant, commence par une lettre et peux contenir des chiffres
 
 "="                  { return EGALE; }
 "+" {return PLUS;}
+"++" {return INCREMENT;}
 "-" {return MOINS;}
+"--" {return DECREMENT;}
 "*" {return FOIS;}
 "/" {return DIVISER;}
 "(" {return PAR_G;}
 ")" {return PAR_D;}
+"{" {return AC_G;}
 "<"      { return PP; }
 ">"      { return PG; }
 "<="     { return PE; }
